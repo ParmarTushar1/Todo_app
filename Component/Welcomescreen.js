@@ -4,13 +4,16 @@ import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 const WelcomeScreen = ({ navigation }) => {
 
   const handleStart = () => {
+   console.log("the useer is now on the welcome screen===================================>");
     navigation.navigate('Homescreen'); // Replace 'NextScreen' with the actual screen name
   };
 
   return (
     <View style={styles.container}>
+      
       <Image 
-        source={require('/home/tushar/Desktop/sample/Todo/Component/Assets.img/welcome.screen.img.1.png')}
+        source={require('/home/tushar/Desktop/sample/Todo/Component/Assets.img/undraw_Predictive_analytics_re_wxt8.png')}
+        // https://undraw.co/illustrations for img svg and png 
         style={styles.image}
       />
       <Text style={styles.welcomeMessage}>
@@ -45,20 +48,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   image: {
-    width: 410,
-    height: 210,
+    width: 430,
+    height: 270,
     resizeMode: 'contain',
     marginBottom: 120,
   },
   button: {
     backgroundColor: '#62b4e4',
-    paddingVertical: 12,
     paddingHorizontal: 40,
-        paddingVertical: 13,
-    paddingHorizontal: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 90,
     borderRadius: 25,
     position: 'absolute',
-    bottom: 40, // Adjust this value to move the button further down
+    bottom: 30, // Adjust this value to move the button further down
   },
   buttonText: {
     color: '#ffffff',
