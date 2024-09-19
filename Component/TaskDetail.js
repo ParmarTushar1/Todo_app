@@ -27,20 +27,20 @@ const TaskDetail = ({ route }) => {
 
     // Debugging output
     console.log('Updating Task:', {
-      id: task.id, // Ensure the task ID is included
+      id: task.id, 
       taskName,
       taskDescription,
       priority,
     });
 
     onUpdateTask({
-      id: task.id, // Ensure to include the task ID
+      id: task.id, 
       taskName,
       taskDescription,
       priority,
     });
 
-    setHasChanges(false); // Reset hasChanges after update
+    setHasChanges(false); 
   }, [task, taskName, taskDescription, priority, onUpdateTask]);
 
   const confirmDeleteTask = () => {

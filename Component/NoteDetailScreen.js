@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
@@ -10,12 +10,12 @@ const NoteDetailScreen = () => {
   const [noteText, setNoteText] = useState(note.text);
   const [isItemAdded, setIsItemAdded] = useState(note.text.trim().length > 0);
 
-  useEffect(() => {
+  useMemo(() => {
     setNoteText(note.text);
     setIsItemAdded(note.text.trim().length > 0);
   }, [note]);
 
-  useEffect(() => {
+  useMemo(() => {
     setIsItemAdded(noteText.trim().length > 0);
   }, [noteText]);
 
