@@ -212,11 +212,13 @@ const TasksScreen = ({ route }) => {
         data={taskList}
         renderItem={({ item }) => (
           <TouchableOpacity
+
             onPress={() => navigation.navigate('TaskDetail', {
               task: item,
               onUpdateTask,  // Pass onUpdateTask to TaskDetail
               onDeleteTask,  
             })}
+            
             style={[styles.todoItem, isDarkMode ? styles.darkTodoItem : styles.lightTodoItem]}
           >
             <CheckBox
