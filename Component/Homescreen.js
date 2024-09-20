@@ -8,7 +8,6 @@ import {
   Switch,
   ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
 const Homescreen = () => {
@@ -18,7 +17,7 @@ const Homescreen = () => {
   const [priority, setPriority] = useState('Medium');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
-
+  
   const navigation = useNavigation();
 
   const saveTask = () => {
@@ -70,6 +69,10 @@ const Homescreen = () => {
 
   const toggleMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const navigateToTasksScreen = () => {
+    navigation.navigate('TasksScreen', { tasks: todos, onTasksUpdate: setTodos });
   };
 
   const navigateToNotes = () => {
@@ -127,7 +130,7 @@ const Homescreen = () => {
 
       <View style={styles.boxContainer}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('TasksScreen', { tasks: todos })}
+          onPress={navigateToTasksScreen}
           style={[styles.box, styles.tasksBox]}
         >
           <Text style={styles.boxTitle}>Tasks (Total: {todos.length})</Text>
@@ -144,7 +147,6 @@ const Homescreen = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

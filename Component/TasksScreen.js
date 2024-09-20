@@ -5,42 +5,71 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 
 const TasksScreen = ({ route }) => {
-  const { tasks } = route.params;
+  const { tasks, onTasksUpdate } = route.params; // Assuming onTasksUpdate is a function passed to update tasks
   const [taskList, setTaskList] = useState(tasks);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isActionHeaderVisible, setIsActionHeaderVisible] = useState(false);
   const navigation = useNavigation();
 
-  // Function to handle task updates
   const onUpdateTask = (updatedTask) => {
-    setTaskList(prevTasks =>
-      prevTasks.map(task =>
-        task.id === updatedTask.id ? updatedTask : task
-      )
+    const updatedTaskList = taskList.map((task) =>
+      task.id === updatedTask.id ? updatedTask : task
     );
+    setTaskList(updatedTaskList);
+    onTasksUpdate(updatedTaskList); // Update the parent component if necessary
   };
 
-  // Function to handle task deletion
-  const onDeleteTask = (taskId) => {
-    setTaskList(prevTasks => prevTasks.filter(task => task.id !== taskId));
+  const onDeleteTask = (id) => {
+    Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        onPress: () => {
+          const updatedTaskList = taskList.filter((task) => task.id !== id);
+          setTaskList(updatedTaskList);
+          onTasksUpdate(updatedTaskList); // Ensure the parent component is updated
+          setIsActionHeaderVisible(false); // Hide the action header after deletion
+        },
+      },
+    ]);
   };
 
   const handleCheckBoxChange = (id) => {
-    setTaskList(prevTasks =>
-      prevTasks.map(task =>
-        task.id === id
-          ? { ...task, isCompleted: !task.isCompleted }
-          : task
-      )
+    const updatedTaskList = taskList.map((task) =>
+      task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
     );
+    setTaskList(updatedTaskList);
+    onTasksUpdate(updatedTaskList); // Update parent component if necessary
   };
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleLongPress = (task) => {
+    setSelectedTask(task);
+    setIsActionHeaderVisible(true);
+  };
+
+  const moveToNotesSection = () => {
+    console.log('Moved to Notes Section:', selectedTask);
+    setIsActionHeaderVisible(false);
+  };
+
+  const pinTask = () => {
+    // Filter out the selected task and add it to the top
+    const updatedTaskList = taskList.filter((task) => task.id !== selectedTask.id);
+    updatedTaskList.unshift(selectedTask); // Add the selected task to the top
+    setTaskList(updatedTaskList);
+    onTasksUpdate(updatedTaskList);
+    setIsActionHeaderVisible(false);
   };
 
   return (
@@ -55,13 +84,12 @@ const TasksScreen = ({ route }) => {
         data={taskList}
         renderItem={({ item }) => (
           <TouchableOpacity
-
             onPress={() => navigation.navigate('TaskDetail', {
               task: item,
-              onUpdateTask,  // Pass onUpdateTask to TaskDetail
-              onDeleteTask,  
+              onUpdateTask,
+              onDeleteTask,
             })}
-
+            onLongPress={() => handleLongPress(item)}
             style={[styles.todoItem, isDarkMode ? styles.darkTodoItem : styles.lightTodoItem]}
           >
             <CheckBox
@@ -82,8 +110,21 @@ const TasksScreen = ({ route }) => {
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
       />
+      {isActionHeaderVisible && (
+        <View style={styles.actionHeader}>
+          <TouchableOpacity onPress={moveToNotesSection} style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>📋 Notes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={pinTask} style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>📌 Pin</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDeleteTask(selectedTask.id)} style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>🗑️ Delete</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -165,6 +206,26 @@ const styles = StyleSheet.create({
   },
   darkPriorityText: {
     color: '#aaa',
+  },
+  actionHeader: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#62b4e4',
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  actionButton: {
+    padding: 6,
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
